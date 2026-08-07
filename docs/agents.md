@@ -56,6 +56,19 @@ returns 402 with an `accepts` array containing one entry per rail:
 }
 ```
 
+Every accept entry also carries `outputSchema`, split into `input` — the method,
+query params and/or JSON body fields the route expects — and `output`, the JSON
+Schema of the paid 200 body. Both are generated from `openapi.json`, so the
+challenge you get at runtime and the published spec never disagree. An agent that
+hits a 402 cold has everything it needs to construct a valid call without reading
+any documentation.
+
+**Protocol version.** This service speaks **x402 v1** (`"x402Version": 1`), which
+is what every `x402-fetch` client in this repo's examples expects. x402 v2 moves
+the schema into `extensions.bazaar.schema` and switches to CAIP-2 network ids; it
+is a planned future upgrade for agentcash compatibility, not a change you need to
+handle today.
+
 **EVM path.** Sign an EIP-3009 `transferWithAuthorization`. Entirely
 client-side; no gas from the payer. `x402-fetch` does it in two lines:
 

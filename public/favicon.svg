@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="402">
+  <rect width="64" height="64" rx="14" fill="#0b0d12"/>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#7ddc6a" stroke-width="2.5" opacity=".65"/>
+  <text x="32" y="43" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace"
+        font-size="30" font-weight="700" fill="#7ddc6a">402</text>
+</svg>

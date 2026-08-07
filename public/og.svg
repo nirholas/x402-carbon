@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img"
+     aria-label="x402-carbon">
+  <rect width="1200" height="630" fill="#0b0d12"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#7ddc6a"/>
+  <text x="80" y="150" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="44"
+        font-weight="700" fill="#7ddc6a">402</text>
+  <text x="80" y="290" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="76"
+        font-weight="700" fill="#f2f5f9">x402-carbon</text>
+  <text x="80" y="372" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial" font-size="36" fill="#9aa4b2">Grid carbon intensity now and best-window scheduling</text>
+  <text x="80" y="424" font-family="ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial" font-size="36" fill="#9aa4b2">— keyless live data for green agents</text>
+  <text x="80" y="560" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="28"
+        fill="#7ddc6a">HTTP 402 · USDC on Base or Solana · pay-per-call</text>
+</svg>

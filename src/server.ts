@@ -18,6 +18,7 @@ import {
   usingSuiteDefaultPayTo,
   type RoutePrices,
 } from "./payments.js";
+import { ROUTE_SCHEMAS } from "./schemas.js";
 import {
   BadRequestError,
   bestWindow,
@@ -38,27 +39,13 @@ const ROUTES: RoutePrices = {
     price: "$0.001",
     description:
       "Current GB grid carbon intensity (gCO2/kWh) and generation mix, national or by postcode region, with the wind and solar conditions behind it.",
-    outputSchema: {
-      type: "object",
-      properties: {
-        intensity: { type: "object" },
-        generationMix: { type: "array", items: { type: "object" } },
-        lowCarbonPercent: { type: "number" },
-      },
-    },
+    outputSchema: ROUTE_SCHEMAS["GET /now"],
   },
   "POST /best-window": {
     price: "$0.002",
     description:
       "The lowest-carbon window of a given length in the next 48 hours, with the saving against running now, non-overlapping runners-up, and the full half-hourly forecast curve.",
-    outputSchema: {
-      type: "object",
-      properties: {
-        best: { type: "object" },
-        recommendation: { type: "string" },
-        forecastCurve: { type: "array", items: { type: "object" } },
-      },
-    },
+    outputSchema: ROUTE_SCHEMAS["POST /best-window"],
   },
 };
 
@@ -88,11 +75,18 @@ app.get("/openapi.json", (_req, res) => {
   res.type("application/json").sendFile(join(root, "openapi.json"));
 });
 
-// Static site.
-app.use(express.static(publicDir));
+// Static site. `index: false` keeps `/` on the JSON handler below — the landing
+// page is served from there only when the caller actually asked for HTML.
+app.use(express.static(publicDir, { index: false }));
 
-// Free: service info.
-app.get("/", (_req, res) => {
+// Free: service info. Browsers and crawlers (Accept: text/html) get the landing
+// page with the origin's title/description/favicon metadata; agents and curl get
+// the JSON contract.
+app.get("/", (req, res) => {
+  if (req.accepts(["json", "html"]) === "html") {
+    res.sendFile(join(publicDir, "index.html"));
+    return;
+  }
   res.json({
     name: "x402-carbon",
     description:

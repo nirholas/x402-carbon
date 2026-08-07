@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>x402-carbon — Grid carbon intensity now and best-window scheduling…</title>
+<meta name="description" content="Grid carbon intensity now and best-window scheduling — keyless live data for green agents. Pay per call over HTTP 402 with USDC on Base or Solana; no account, no API key.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:title" content="x402-carbon">
+<meta property="og:description" content="Grid carbon intensity now and best-window scheduling — keyless live data for green agents.">
+<meta property="og:image" content="/og.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="x402-carbon">
+<meta name="twitter:description" content="Grid carbon intensity now and best-window scheduling — keyless live data for green agents.">
+<meta name="twitter:image" content="/og.svg">
+<link rel="alternate" type="application/json" href="/openapi.json" title="OpenAPI">
+<style>
+  :root {
+    --accent: #7ddc6a;
+    --bg: #0b0d12; --panel: #12151c; --line: #232833;
+    --fg: #eef2f7; --dim: #98a2b3;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #ffffff; --panel: #f7f8fa; --line: #e4e7ec; --fg: #101828; --dim: #667085; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg); line-height: 1.55;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 52rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .badge {
+    display: inline-block; font: 600 .75rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 999px; padding: .4rem .7rem;
+  }
+  h1 { font: 700 clamp(1.9rem, 5vw, 2.6rem)/1.15 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 1rem 0 .5rem; }
+  .tagline { color: var(--dim); font-size: 1.1rem; margin: 0 0 2rem; }
+  h2 { font-size: 1.05rem; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin: 2.5rem 0 .75rem; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td:last-child, th:last-child { white-space: normal; color: var(--dim); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+  .m { font: 600 .72rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; padding: .28rem .45rem; border-radius: 5px; border: 1px solid var(--line); }
+  .m-get { color: #4ea1ff; } .m-post { color: #62d19a; } .m-put, .m-patch { color: #e2b93b; } .m-delete { color: #f07a7a; }
+  .price { color: var(--accent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .free { color: var(--dim); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  pre { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; overflow-x: auto; }
+  a { color: var(--accent); }
+  footer { margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--dim); font-size: .9rem; }
+  footer a { margin-right: 1rem; }
+</style>
+</head>
+<body>
+<main>
+  <span class="badge">x402 · pay per call</span>
+  <h1>x402-carbon</h1>
+  <p class="tagline">Grid carbon intensity now and best-window scheduling — keyless live data for green agents</p>
+
+  <p>No account, no API key, no subscription. Call a paid route without payment and you
+  get <code>HTTP 402</code> plus a machine-readable challenge listing what it costs and how
+  to pay — USDC on Base (EVM) or Solana. Retry with an <code>X-PAYMENT</code> header and the
+  same request returns the artifact.</p>
+
+  <h2>Routes</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Price</th><th>Returns</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="m m-get">GET</span></td>
+          <td><code>/now</code></td>
+          <td><span class="price">$0.001</span></td>
+          <td>Current GB grid carbon intensity and generation mix</td>
+        </tr>
+        <tr>
+          <td><span class="m m-post">POST</span></td>
+          <td><code>/best-window</code></td>
+          <td><span class="price">$0.002</span></td>
+          <td>The lowest-carbon window to run a deferrable job in the next 48 hours</td>
+        </tr>
+        <tr>
+          <td><span class="m m-get">GET</span></td>
+          <td><code>/</code></td>
+          <td><span class="free">free</span></td>
+          <td>Service metadata, live prices, and active payment rails</td>
+        </tr>
+        <tr>
+          <td><span class="m m-get">GET</span></td>
+          <td><code>/health</code></td>
+          <td><span class="free">free</span></td>
+          <td>Liveness probe</td>
+        </tr>
+        <tr>
+          <td><span class="m m-get">GET</span></td>
+          <td><code>/.well-known/x402</code></td>
+          <td><span class="free">free</span></td>
+          <td>x402 discovery manifest</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Call it</h2>
+<pre><code>npm i x402-fetch viem
+
+import { wrapFetchWithPayment } from "x402-fetch";
+const pay = wrapFetchWithPayment(fetch, wallet);
+const res = await pay("http://localhost:4025/health");</code></pre>
+
+  <h2>Machine-readable</h2>
+  <ul>
+    <li><a href="/openapi.json">/openapi.json</a> — full OpenAPI 3.1 spec, prices included</li>
+    <li><a href="/.well-known/x402">/.well-known/x402</a> — x402 discovery manifest</li>
+    <li><a href="/skill.md">/skill.md</a> — agent-facing contract for AI clients</li>
+  </ul>
+
+  <footer>
+    <a href="https://github.com/nirholas/x402-carbon">Source</a>
+    <a href="https://nirholas.github.io/x402-carbon/">Docs</a>
+    <a href="https://x402.org">x402</a>
+  </footer>
+</main>
+</body>
+</html>
