@@ -1,0 +1,1127 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "x402-carbon",
+    "version": "0.1.0",
+    "description": "Grid carbon intensity now and best-window scheduling — keyless live data for green agents\n\nEvery paid route returns the purchased artifact in the 200 response body. Pay in USDC on Base or Solana — your client picks the rail.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "nirholas",
+      "email": "nichxbt@gmail.com",
+      "url": "https://github.com/nirholas/x402-carbon"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4025",
+      "description": "Local development"
+    },
+    {
+      "url": "{baseUrl}",
+      "description": "Deployed instance",
+      "variables": {
+        "baseUrl": {
+          "default": "http://localhost:4025"
+        }
+      }
+    }
+  ],
+  "externalDocs": {
+    "description": "Docs site",
+    "url": "https://nirholas.github.io/x402-carbon/"
+  },
+  "tags": [
+    {
+      "name": "paid",
+      "description": "x402-paid routes. Artifact returned in the 200 body."
+    },
+    {
+      "name": "free",
+      "description": "Unpaid metadata routes."
+    }
+  ],
+  "paths": {
+    "/now": {
+      "get": {
+        "operationId": "now",
+        "summary": "Current GB grid carbon intensity and generation mix ($0.001)",
+        "description": "Current GB grid carbon intensity and generation mix\n\nPaid route — $0.001 in USDC. Pay on Base (EVM) or Solana; the 402 challenge lists both rails.",
+        "tags": [
+          "paid"
+        ],
+        "parameters": [
+          {
+            "name": "postcode",
+            "in": "query",
+            "required": false,
+            "description": "UK outward code — the part before the space, e.g. `SW1A`, `M1`, `EH1`, `RG10`. Omit for the national grid.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "SW1A"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current gCO2/kWh with its index band, the full generation mix, low-carbon / renewable / fossil shares, and the wind and solar conditions behind them",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "source",
+                    "coverage",
+                    "scope",
+                    "period",
+                    "intensity",
+                    "generationMix",
+                    "retrievedAt"
+                  ],
+                  "properties": {
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "carbon": {
+                          "type": "string",
+                          "enum": [
+                            "uk-carbon-intensity"
+                          ]
+                        },
+                        "weather": {
+                          "type": "string",
+                          "enum": [
+                            "open-meteo"
+                          ]
+                        }
+                      }
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "description": "The geographic limit of this data, stated explicitly."
+                    },
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "national",
+                        "regional"
+                      ]
+                    },
+                    "region": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "dno": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Distribution network operator."
+                        },
+                        "postcode": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "period": {
+                      "type": "object",
+                      "description": "The half-hourly settlement period these figures cover.",
+                      "properties": {
+                        "from": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "string"
+                        },
+                        "forecast": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "actual": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "index": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "intensity": {
+                      "type": "object",
+                      "properties": {
+                        "gCO2PerKwh": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "basis": {
+                          "type": "string",
+                          "enum": [
+                            "actual",
+                            "forecast"
+                          ]
+                        },
+                        "index": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "indexScale": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "generationMix": {
+                      "type": "array",
+                      "description": "Share of generation by fuel, summing to 100.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "fuel": {
+                            "type": "string",
+                            "enum": [
+                              "biomass",
+                              "coal",
+                              "imports",
+                              "gas",
+                              "nuclear",
+                              "other",
+                              "hydro",
+                              "solar",
+                              "wind"
+                            ]
+                          },
+                          "percent": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "lowCarbonPercent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Wind, solar, hydro, nuclear, biomass."
+                    },
+                    "renewablePercent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Wind, solar, hydro only."
+                    },
+                    "fossilPercent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Coal and gas."
+                    },
+                    "weather": {
+                      "type": "object",
+                      "description": "Wind and solar conditions over the same window — the physical driver behind the carbon numbers. Never fails the request.",
+                      "properties": {
+                        "latitude": {
+                          "type": "number"
+                        },
+                        "longitude": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "`ok` or `unavailable: <reason>`."
+                        },
+                        "hourly": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "windKph": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "solarWm2": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "description": "Shortwave radiation, W/m²."
+                              },
+                              "cloudCoverPct": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "retrievedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                },
+                "example": {
+                  "source": {
+                    "carbon": "uk-carbon-intensity",
+                    "weather": "open-meteo"
+                  },
+                  "coverage": "Great Britain (National Grid ESO). Regional detail by postcode outward code.",
+                  "scope": "regional",
+                  "region": {
+                    "id": 13,
+                    "name": "London",
+                    "dno": "UKPN London",
+                    "postcode": "SW1A"
+                  },
+                  "period": {
+                    "from": "2026-08-07T02:30Z",
+                    "to": "2026-08-07T03:00Z",
+                    "forecast": 185,
+                    "actual": null,
+                    "index": "high"
+                  },
+                  "intensity": {
+                    "gCO2PerKwh": 185,
+                    "basis": "forecast",
+                    "index": "high",
+                    "indexScale": [
+                      "very low",
+                      "low",
+                      "moderate",
+                      "high",
+                      "very high"
+                    ]
+                  },
+                  "generationMix": [
+                    {
+                      "fuel": "biomass",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "coal",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "imports",
+                      "percent": 42.7
+                    },
+                    {
+                      "fuel": "gas",
+                      "percent": 41.3
+                    },
+                    {
+                      "fuel": "nuclear",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "other",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "hydro",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "solar",
+                      "percent": 0
+                    },
+                    {
+                      "fuel": "wind",
+                      "percent": 16
+                    }
+                  ],
+                  "lowCarbonPercent": 16,
+                  "renewablePercent": 16,
+                  "fossilPercent": 41.3,
+                  "weather": {
+                    "latitude": 51.51,
+                    "longitude": -0.13,
+                    "status": "ok",
+                    "hourly": [
+                      {
+                        "time": "2026-08-07T02:00:00.000Z",
+                        "windKph": 9.2,
+                        "solarWm2": 0,
+                        "cloudCoverPct": 63
+                      },
+                      {
+                        "time": "2026-08-07T03:00:00.000Z",
+                        "windKph": 8.8,
+                        "solarWm2": 0,
+                        "cloudCoverPct": 58
+                      }
+                    ]
+                  },
+                  "retrievedAt": "2026-08-07T03:11:04.882Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required (or payment rejected). The body lists both accepted rails.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream data source failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/best-window": {
+      "post": {
+        "operationId": "bestWindow",
+        "summary": "The lowest-carbon window to run a deferrable job in the next 48 hours ($0.002)",
+        "description": "The lowest-carbon window to run a deferrable job in the next 48 hours\n\nPaid route — $0.002 in USDC. Pay on Base (EVM) or Solana; the 402 challenge lists both rails.",
+        "tags": [
+          "paid"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "durationMinutes": {
+                    "type": "integer",
+                    "minimum": 30,
+                    "maximum": 1440,
+                    "default": 60
+                  },
+                  "postcode": {
+                    "type": "string",
+                    "description": "UK outward code. Omit for national."
+                  },
+                  "notBefore": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "notAfter": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "example": {
+                "durationMinutes": 120,
+                "postcode": "SW1A"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The best start time with mean intensity and the saving against running now, three non-overlapping runners-up, the worst window for contrast, and the full half-hourly forecast curve",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "source",
+                    "coverage",
+                    "scope",
+                    "request",
+                    "best",
+                    "recommendation",
+                    "forecastCurve",
+                    "retrievedAt"
+                  ],
+                  "properties": {
+                    "source": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "coverage": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "national",
+                        "regional"
+                      ]
+                    },
+                    "region": {
+                      "type": "object",
+                      "additionalProperties": true
+                    },
+                    "request": {
+                      "type": "object",
+                      "properties": {
+                        "durationMinutes": {
+                          "type": "integer"
+                        },
+                        "notBefore": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "notAfter": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    },
+                    "currentIntensity": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "gCO2/kWh in the current settlement period."
+                    },
+                    "best": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": "string",
+                              "description": "Half-hourly settlement period start, `YYYY-MM-DDTHH:MMZ`."
+                            },
+                            "end": {
+                              "type": "string"
+                            },
+                            "durationMinutes": {
+                              "type": "integer"
+                            },
+                            "meanIntensity": {
+                              "type": "number",
+                              "description": "Mean gCO2/kWh across the window."
+                            },
+                            "peakIntensity": {
+                              "type": "number"
+                            },
+                            "index": {
+                              "type": "string",
+                              "enum": [
+                                "very low",
+                                "low",
+                                "moderate",
+                                "high",
+                                "very high"
+                              ]
+                            },
+                            "savingVsNowPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "savingVsWorstPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "gCO2SavedPerKwhVsNow": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "runnersUp": {
+                      "type": "array",
+                      "description": "Up to three next-best windows that do not overlap the winner or each other.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start": {
+                            "type": "string",
+                            "description": "Half-hourly settlement period start, `YYYY-MM-DDTHH:MMZ`."
+                          },
+                          "end": {
+                            "type": "string"
+                          },
+                          "durationMinutes": {
+                            "type": "integer"
+                          },
+                          "meanIntensity": {
+                            "type": "number",
+                            "description": "Mean gCO2/kWh across the window."
+                          },
+                          "peakIntensity": {
+                            "type": "number"
+                          },
+                          "index": {
+                            "type": "string",
+                            "enum": [
+                              "very low",
+                              "low",
+                              "moderate",
+                              "high",
+                              "very high"
+                            ]
+                          },
+                          "savingVsNowPct": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "savingVsWorstPct": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "gCO2SavedPerKwhVsNow": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "worstWindow": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": "string",
+                              "description": "Half-hourly settlement period start, `YYYY-MM-DDTHH:MMZ`."
+                            },
+                            "end": {
+                              "type": "string"
+                            },
+                            "durationMinutes": {
+                              "type": "integer"
+                            },
+                            "meanIntensity": {
+                              "type": "number",
+                              "description": "Mean gCO2/kWh across the window."
+                            },
+                            "peakIntensity": {
+                              "type": "number"
+                            },
+                            "index": {
+                              "type": "string",
+                              "enum": [
+                                "very low",
+                                "low",
+                                "moderate",
+                                "high",
+                                "very high"
+                              ]
+                            },
+                            "savingVsNowPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "savingVsWorstPct": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "gCO2SavedPerKwhVsNow": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "recommendation": {
+                      "type": "string",
+                      "description": "One sentence you can hand to a human."
+                    },
+                    "forecastCurve": {
+                      "type": "array",
+                      "description": "Every half-hourly slot in the 48-hour horizon.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "from": {
+                            "type": "string"
+                          },
+                          "to": {
+                            "type": "string"
+                          },
+                          "gCO2PerKwh": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "index": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "weather": {
+                      "type": "object",
+                      "description": "Wind and solar conditions over the same window — the physical driver behind the carbon numbers. Never fails the request.",
+                      "properties": {
+                        "latitude": {
+                          "type": "number"
+                        },
+                        "longitude": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "`ok` or `unavailable: <reason>`."
+                        },
+                        "hourly": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "windKph": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "solarWm2": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "description": "Shortwave radiation, W/m²."
+                              },
+                              "cloudCoverPct": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "retrievedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                },
+                "example": {
+                  "source": {
+                    "carbon": "uk-carbon-intensity",
+                    "weather": "open-meteo"
+                  },
+                  "coverage": "Great Britain (National Grid ESO). Regional detail by postcode outward code.",
+                  "scope": "regional",
+                  "region": {
+                    "id": 13,
+                    "name": "London",
+                    "dno": "UKPN London",
+                    "postcode": "SW1A"
+                  },
+                  "request": {
+                    "durationMinutes": 120,
+                    "notBefore": "2026-08-07T03:12:00.000Z",
+                    "notAfter": "2026-08-09T03:12:00.000Z"
+                  },
+                  "currentIntensity": 185,
+                  "best": {
+                    "start": "2026-08-08T12:30Z",
+                    "end": "2026-08-08T14:30Z",
+                    "durationMinutes": 120,
+                    "meanIntensity": 56,
+                    "peakIntensity": 63,
+                    "index": "low",
+                    "savingVsNowPct": 69.7,
+                    "savingVsWorstPct": 74.5,
+                    "gCO2SavedPerKwhVsNow": 129
+                  },
+                  "runnersUp": [
+                    {
+                      "start": "2026-08-07T13:00Z",
+                      "end": "2026-08-07T15:00Z",
+                      "durationMinutes": 120,
+                      "meanIntensity": 74,
+                      "peakIntensity": 81,
+                      "index": "low",
+                      "savingVsNowPct": 60,
+                      "savingVsWorstPct": 66.4,
+                      "gCO2SavedPerKwhVsNow": 111
+                    },
+                    {
+                      "start": "2026-08-08T02:00Z",
+                      "end": "2026-08-08T04:00Z",
+                      "durationMinutes": 120,
+                      "meanIntensity": 98,
+                      "peakIntensity": 106,
+                      "index": "low",
+                      "savingVsNowPct": 47,
+                      "savingVsWorstPct": 55.5,
+                      "gCO2SavedPerKwhVsNow": 87
+                    }
+                  ],
+                  "worstWindow": {
+                    "start": "2026-08-07T18:00Z",
+                    "end": "2026-08-07T20:00Z",
+                    "durationMinutes": 120,
+                    "meanIntensity": 220,
+                    "peakIntensity": 238,
+                    "index": "high",
+                    "savingVsNowPct": -18.9,
+                    "savingVsWorstPct": 0,
+                    "gCO2SavedPerKwhVsNow": -35
+                  },
+                  "recommendation": "Start at 2026-08-08T12:30Z on London (SW1A): 56 gCO2/kWh mean, 69.7% below running it now (185 gCO2/kWh). Deferring saves roughly 129 gCO2 for every kWh consumed.",
+                  "forecastCurve": [
+                    {
+                      "from": "2026-08-07T03:00Z",
+                      "to": "2026-08-07T03:30Z",
+                      "gCO2PerKwh": 183,
+                      "index": "high"
+                    },
+                    {
+                      "from": "2026-08-07T03:30Z",
+                      "to": "2026-08-07T04:00Z",
+                      "gCO2PerKwh": 179,
+                      "index": "moderate"
+                    },
+                    {
+                      "from": "2026-08-07T04:00Z",
+                      "to": "2026-08-07T04:30Z",
+                      "gCO2PerKwh": 172,
+                      "index": "moderate"
+                    }
+                  ],
+                  "weather": {
+                    "latitude": 51.51,
+                    "longitude": -0.13,
+                    "status": "ok",
+                    "hourly": [
+                      {
+                        "time": "2026-08-07T03:00:00.000Z",
+                        "windKph": 8.8,
+                        "solarWm2": 0,
+                        "cloudCoverPct": 58
+                      },
+                      {
+                        "time": "2026-08-08T12:00:00.000Z",
+                        "windKph": 27.4,
+                        "solarWm2": 611,
+                        "cloudCoverPct": 12
+                      }
+                    ]
+                  },
+                  "retrievedAt": "2026-08-07T03:12:19.447Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required (or payment rejected). The body lists both accepted rails.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream data source failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "operationId": "serviceInfo",
+        "summary": "Service metadata, live prices, and active payment rails (free)",
+        "tags": [
+          "free"
+        ],
+        "responses": {
+          "200": {
+            "description": "Service metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Liveness probe (free)",
+        "tags": [
+          "free"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "uptime": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/x402": {
+      "get": {
+        "operationId": "discoveryManifest",
+        "summary": "x402 discovery manifest (free)",
+        "tags": [
+          "free"
+        ],
+        "responses": {
+          "200": {
+            "description": "Manifest.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Machine-readable error code."
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable description."
+          }
+        }
+      },
+      "PaymentRequirements": {
+        "type": "object",
+        "description": "One accepted payment rail, per the x402 specification.",
+        "required": [
+          "scheme",
+          "network",
+          "maxAmountRequired",
+          "resource",
+          "payTo",
+          "asset"
+        ],
+        "properties": {
+          "scheme": {
+            "type": "string",
+            "enum": [
+              "exact"
+            ]
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "base-sepolia",
+              "base",
+              "solana",
+              "solana-devnet"
+            ],
+            "description": "EVM or Solana network this rail settles on."
+          },
+          "maxAmountRequired": {
+            "type": "string",
+            "description": "Price in USDC base units (6 decimals)."
+          },
+          "resource": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "payTo": {
+            "type": "string",
+            "description": "Receive address (0x… for EVM, base58 for Solana)."
+          },
+          "maxTimeoutSeconds": {
+            "type": "integer"
+          },
+          "asset": {
+            "type": "string",
+            "description": "USDC contract address or SPL mint."
+          },
+          "outputSchema": {
+            "type": "object"
+          },
+          "extra": {
+            "type": "object",
+            "description": "EVM: EIP-712 domain (`name`, `version`). Solana: `feePayer`, the sponsor that pays the SOL network fee."
+          }
+        }
+      },
+      "PaymentRequired": {
+        "type": "object",
+        "required": [
+          "x402Version",
+          "accepts"
+        ],
+        "properties": {
+          "x402Version": {
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          "error": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "accepts": {
+            "type": "array",
+            "description": "Both rails: USDC on Base and USDC on Solana.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentRequirements"
+            }
+          }
+        }
+      }
+    }
+  }
+}
