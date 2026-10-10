@@ -124,3 +124,26 @@ Apache-2.0. Part of the [x402 Suite](https://github.com/nirholas/x402-suite).
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=nirholas/x402-carbon&type=Date)](https://www.star-history.com/#nirholas/x402-carbon&Date)
+
+<!-- three.ws:growth -->
+## Support the project
+
+If x402-carbon saves you time, **[star it on GitHub](https://github.com/nirholas/x402-carbon)**. Stars are how other developers and AI agents find the repositories worth trusting, and they cost you one click.
+
+Know someone who would use it? [Post on X](https://twitter.com/intent/tweet?text=x402-carbon%3A%20Grid%20carbon%20intensity%20now%20and%20best-window%20scheduling%3A%20keyless%20live%20data%20for%20green%20agents%2C%20paid%20with&url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-carbon) · [Share on Bluesky](https://bsky.app/intent/compose?text=x402-carbon%3A%20Grid%20carbon%20intensity%20now%20and%20best-window%20scheduling%3A%20keyless%20live%20data%20for%20green%20agents%2C%20paid%20with%20https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-carbon) · [Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-carbon) · [Submit to Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-carbon&t=x402-carbon%3A%20Grid%20carbon%20intensity%20now%20and%20best-window%20scheduling%3A%20keyless%20live%20data%20for%20green%20agents%2C%20paid%20with) · [Share on Reddit](https://www.reddit.com/submit?url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-carbon&title=x402-carbon%3A%20Grid%20carbon%20intensity%20now%20and%20best-window%20scheduling%3A%20keyless%20live%20data%20for%20green%20agents%2C%20paid%20with)
+
+## Built for AI agents too
+
+Coding agents and LLM tooling can read this repo directly: [AGENTS.md](./AGENTS.md), [llms.txt](./llms.txt), [llms-full.txt](./llms-full.txt). Point an agent at `https://github.com/nirholas/x402-carbon` and it has the context it needs.
+
+## More from the same author
+
+- [All repositories by nirholas](https://github.com/nirholas/nirholas#readme): the full catalog, grouped by topic
+- [three.ws](https://three.ws): the platform for 3D AI agents with Solana wallets, a skill marketplace and x402 payments
+- Questions or ideas: [open an issue](https://github.com/nirholas/x402-carbon/issues) or [start a discussion](https://github.com/nirholas/x402-carbon/discussions)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=nirholas/x402-carbon)](https://github.com/nirholas/x402-carbon/graphs/contributors)
+
+<!-- /three.ws:growth -->

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "x402-carbon"
+abstract: "Grid carbon intensity now and best-window scheduling: keyless live data for green agents, paid with x402: USDC on Base or Solana."
+license: Apache-2.0
+repository-code: "https://github.com/nirholas/x402-carbon"
+url: "https://three.ws"
+authors:
+  - name: three.ws
+    website: "https://three.ws"
