@@ -1,0 +1,22 @@
+{
+  "name": "x402-carbon",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Self-hosted GB grid carbon intensity now and lowest-carbon job scheduling window, priced per call over x402.",
+  "plugins": [
+    {
+      "name": "x402-carbon",
+      "source": "./plugins/x402-carbon",
+      "description": "Self-hosted GB grid carbon intensity now and lowest-carbon job scheduling window, priced per call over x402.",
+      "category": "data",
+      "tags": [
+        "x402",
+        "carbon",
+        "energy",
+        "scheduling",
+        "agents"
+      ]
+    }
+  ]
+}
