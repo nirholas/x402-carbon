@@ -1,0 +1,18 @@
+{
+  "name": "x402-carbon",
+  "version": "0.1.0",
+  "description": "Self-hosted GB grid carbon intensity now and lowest-carbon job scheduling window, priced per call over x402.",
+  "author": {
+    "name": "nirholas"
+  },
+  "repository": "https://github.com/nirholas/x402-carbon",
+  "homepage": "https://nirholas.github.io/x402-carbon/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "x402",
+    "carbon",
+    "energy",
+    "scheduling",
+    "agents"
+  ]
+}
